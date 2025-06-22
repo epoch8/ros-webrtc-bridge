@@ -12,12 +12,15 @@ scripts = ["install/setup.sh"]
 build = { cmd = "colcon build", inputs = ["src"] }
 # build = {cmd="colcon build --symlink-install", inputs=["src"]}
 
+debug_launch = {cmd = "ros2 launch webrtc_bridge debug.launch.xml", depends-on = ["build"]}
+
 [dependencies]
 ros-jazzy-desktop = ">=0.11.0,<0.12"
 ros-jazzy-usb-cam = ">=0.8.1,<0.9"
 python = ">=3.11,<3.14"
 py-spy = ">=0.4.0,<0.5"
 colcon-common-extensions = ">=0.3.0,<0.4"
+ros-jazzy-rosbridge-suite = ">=2.3.0,<3"
 
 [pypi-dependencies]
 webrtc-bridge = { path = "./src/webrtc_bridge" }
