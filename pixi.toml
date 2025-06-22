@@ -5,12 +5,16 @@ name = "webrtc-ros"
 platforms = ["linux-aarch64"]
 version = "0.1.0"
 
+[activation]
+scripts = ["install/setup.sh"]
+
 [tasks]
 
 [dependencies]
 ros-jazzy-usb-cam = ">=0.8.1,<0.9"
 python = ">=3.11,<3.14"
 py-spy = ">=0.4.0,<0.5"
+colcon-common-extensions = ">=0.3.0,<0.4"
 
 [pypi-dependencies]
 aiortc = ">=1.13.0, <2"
