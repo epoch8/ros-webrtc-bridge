@@ -1,6 +1,6 @@
 [workspace]
 authors = ["Andrey Tatarinov <a@tatarinov.co>"]
-channels = ["conda-forge"]
+channels = ["conda-forge", "robostack-jazzy"]
 name = "webrtc-ros"
 platforms = ["linux-aarch64"]
 version = "0.1.0"
@@ -8,6 +8,7 @@ version = "0.1.0"
 [tasks]
 
 [dependencies]
+ros-jazzy-usb-cam = ">=0.8.1,<0.9"
 python = ">=3.11,<3.14"
 py-spy = ">=0.4.0,<0.5"
 
