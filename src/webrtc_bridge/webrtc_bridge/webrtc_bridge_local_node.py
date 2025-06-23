@@ -1,5 +1,7 @@
+import threading
 import rclpy
 from rclpy.node import Node
+from webrtc_bridge.webcam import main as webcam_main
 
 
 class WebRTCBridgeLocalNode(Node):
@@ -12,6 +14,9 @@ def main():
     rclpy.init()
     node = WebRTCBridgeLocalNode()
 
+    webcam_thread = threading.Thread(target=webcam_main, daemon=True)
+    webcam_thread.start()
+
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
@@ -19,4 +24,5 @@ def main():
 
 
 if __name__ == "__main__":
+
     main()

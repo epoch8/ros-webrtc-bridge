@@ -12367,7 +12367,7 @@ packages:
 - pypi: ./src/webrtc_bridge
   name: webrtc-bridge
   version: 0.0.0
-  sha256: 0cf5572b7b6e4a241ecb8ef27f08c8d77c72cc07f0d67aed26820e2367d59c92
+  sha256: 3eb5a6ddabc3bdef056c88282e92465f0aae372ac6b423e3b3d952e388bf740f
   requires_dist:
   - setuptools
   - aiortc>=1.13.0,<2
