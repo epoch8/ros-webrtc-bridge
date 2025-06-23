@@ -1,6 +1,6 @@
 [workspace]
 authors = ["Andrey Tatarinov <a@tatarinov.co>"]
-channels = ["conda-forge", "robostack-jazzy"]
+channels = ["conda-forge", "robostack-kilted"]
 name = "webrtc-ros"
 platforms = ["linux-aarch64"]
 version = "0.1.0"
@@ -15,12 +15,12 @@ build = { cmd = "colcon build", inputs = ["src"] }
 debug_launch = {cmd = "ros2 launch webrtc_bridge debug.launch.xml", depends-on = ["build"]}
 
 [dependencies]
-ros-jazzy-desktop = ">=0.11.0,<0.12"
-ros-jazzy-usb-cam = ">=0.8.1,<0.9"
+ros-kilted-desktop = "*"
+ros-kilted-usb-cam = "*"
+ros-kilted-rosbridge-suite = "*"
 python = ">=3.11,<3.14"
 py-spy = ">=0.4.0,<0.5"
 colcon-common-extensions = ">=0.3.0,<0.4"
-ros-jazzy-rosbridge-suite = ">=2.3.0,<3"
 
 [pypi-dependencies]
 webrtc-bridge = { path = "./src/webrtc_bridge" }
