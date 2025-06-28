@@ -1,10 +1,7 @@
-import argparse
 import asyncio
 import json
-import logging
 import os
 import platform
-import ssl
 from typing import Optional
 
 from aiohttp import web
@@ -24,9 +21,9 @@ relay = None
 webcam = None
 
 
-def create_local_tracks() -> tuple[
-    Optional[MediaStreamTrack], Optional[MediaStreamTrack]
-]:
+def create_local_tracks() -> (
+    tuple[Optional[MediaStreamTrack], Optional[MediaStreamTrack]]
+):
     global relay, webcam
 
     # Otherwise, play from the system's default webcam.
@@ -95,6 +92,7 @@ async def offer(request: web.Request) -> web.Response:
     audio, video = create_local_tracks()
 
     video_sender = pc.addTrack(video)
+    assert video_sender is not None
     # force_h264(pc, video_sender)
 
     await pc.setRemoteDescription(offer)

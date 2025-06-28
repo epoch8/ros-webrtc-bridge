@@ -1,7 +1,10 @@
 
-# pixi environments
+# pixi and other python stuff
+__pycache__/
+*.py[cod]
 .pixi
 *.egg-info
+.ruff_cache/
 
 # ros stuff
 build/

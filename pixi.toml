@@ -21,6 +21,7 @@ ros-kilted-rosbridge-suite = "*"
 python = ">=3.11,<3.14"
 py-spy = ">=0.4.0,<0.5"
 colcon-common-extensions = ">=0.3.0,<0.4"
+pre-commit = ">=4.2.0,<5"
 
 [pypi-dependencies]
 webrtc-bridge = { path = "./src/webrtc_bridge" }

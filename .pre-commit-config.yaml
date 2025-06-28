@@ -1,0 +1,33 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.7.4
+    hooks:
+      # Run the linter.
+      - id: ruff
+        types_or: [ python, pyi ]
+        exclude: ^migrations/versions/
+      # Auto-fix import sorting issues (error code I)
+      - id: ruff
+        types_or: [ python, pyi ]
+        args: [ --fix ]
+        exclude: ^migrations/versions/
+      # Run the formatter.
+      - id: ruff-format
+        types_or: [ python, pyi ]
+        exclude: ^migrations/versions/
+
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: v1.15.0
+  #   hooks:
+  #     - id: mypy
+  #       exclude: ^migrations/versions/
+  #       additional_dependencies: [types-PyYAML]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: ^migrations/versions/
+      - id: end-of-file-fixer
+        exclude: ^migrations/versions/
+        exclude: version
