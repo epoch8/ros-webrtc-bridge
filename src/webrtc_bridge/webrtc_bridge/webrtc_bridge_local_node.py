@@ -1,8 +1,11 @@
 import threading
+
 import rclpy
 from rclpy.node import Node
-from webrtc_bridge.webcam import main as webcam_main
 from sensor_msgs.msg import Image
+
+from webrtc_bridge.webcam import main as webcam_main
+from webrtc_bridge.webcam import streamer
 
 
 class WebRTCBridgeLocalNode(Node):
@@ -28,8 +31,7 @@ class WebRTCBridgeLocalNode(Node):
         )
 
     def image_callback(self, msg: Image) -> None:
-        # Process incoming image message
-        pass
+        streamer.set_frame(msg)
 
 
 def main():

@@ -14,5 +14,7 @@
 
   <!-- <include file="$(find-pkg-share rosbridge_server)/launch/rosbridge_websocket_launch.xml"/> -->
 
-  <node pkg="webrtc_bridge" exec="webrtc_bridge_local_node"/>
+  <node pkg="webrtc_bridge" exec="webrtc_bridge_local_node">
+    <param name="image_topic" value="/usb_cam/image_raw"/>
+  </node>
 </launch>
