@@ -17,7 +17,8 @@ webrtc-bridge implements two nodes:
 
 # Current state
 
-| Use case | Status |
-| --- | --- |
-| Simple streaming from USB camera on x86 with software encoding | :white_check_mark: |
- 
+| Platform | Feature | Status |
+| --- | --- | --- |
+| x86 | Streaming | ✅ (with software encoding) |
+| rpi4 | Streaming | ✅ (with software encoding) |
+| jetson orin nano | Streaming | ❔ |

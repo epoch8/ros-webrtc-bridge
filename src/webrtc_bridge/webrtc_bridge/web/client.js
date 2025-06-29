@@ -1,10 +1,10 @@
 var ros = new ROSLIB.Ros();
 
-ros.connect("ws://192.168.0.27:9090");
+ros.connect("ws://" + window.location.hostname + ":9090");
 
 var offer_svc = new ROSLIB.Service({
-    ros: ros, 
-    name: "/webrtc_bridge_local_node/offer", 
+    ros: ros,
+    name: "/webrtc_bridge_local_node/offer",
     serviceType: "webrtc_bridge_srv/srv/WebRTCOffer",
 });
 
