@@ -2,7 +2,10 @@
 authors = ["Andrey Tatarinov <a@tatarinov.co>"]
 channels = ["conda-forge", "robostack-kilted"]
 name = "webrtc-ros"
-platforms = ["linux-aarch64"]
+platforms = [
+    "linux-aarch64",
+    "linux-64",
+]
 version = "0.1.0"
 
 [activation]
