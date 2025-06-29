@@ -12,7 +12,7 @@ version = "0.1.0"
 scripts = ["install/setup.sh"]
 
 [tasks]
-build = { cmd = "colcon build", inputs = ["src"] }
+build = { cmd = "colcon build --cmake-args -G Ninja", inputs = ["src"] }
 # build = {cmd="colcon build --symlink-install", inputs=["src"]}
 
 debug_launch = {cmd = "ros2 launch webrtc_bridge debug.launch.xml", depends-on = ["build"]}
@@ -25,6 +25,13 @@ python = ">=3.11,<3.14"
 py-spy = ">=0.4.0,<0.5"
 colcon-common-extensions = ">=0.3.0,<0.4"
 pre-commit = ">=4.2.0,<5"
+compilers = ">=1.10.0,<2"
+pkg-config = ">=0.29.2,<0.30"
+cmake = ">=4.0.3,<5"
+ninja = ">=1.13.0,<2"
+ros-kilted-rosidl-cmake = ">=4.9.4,<5"
+ros-kilted-rosidl-generator-py = ">=0.24.1,<0.25"
+ros-kilted-rosidl-default-generators = ">=1.7.1,<2"
 
 [pypi-dependencies]
 webrtc-bridge = { path = "./src/webrtc_bridge" }

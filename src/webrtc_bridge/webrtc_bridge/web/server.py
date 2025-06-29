@@ -1,3 +1,4 @@
+import asyncio
 import importlib.resources
 import json
 
@@ -49,4 +50,5 @@ def run_web(streamer: WebRTCStreamer) -> None:
         host="0.0.0.0",
         port=8080,
         handle_signals=False,
+        loop=streamer.loop,
     )

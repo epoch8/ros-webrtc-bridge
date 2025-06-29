@@ -1,11 +1,13 @@
 import threading
 
 import rclpy
+from aiortc import RTCSessionDescription
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 
 from webrtc_bridge.streamer import WebRTCStreamer
 from webrtc_bridge.web.server import run_web
+from webrtc_bridge_srv.srv import WebRTCOffer, WebRTCOffer_Request, WebRTCOffer_Response
 
 
 class WebRTCBridgeLocalNode(Node):
@@ -30,10 +32,35 @@ class WebRTCBridgeLocalNode(Node):
             Image, self.image_topic, self.image_callback, 1
         )
 
+        # Create service server
+        self.offer_service = self.create_service(
+            WebRTCOffer, f"{self.get_name()}/offer", self.handle_offer_request
+        )
+
         self.streamer = WebRTCStreamer(self.get_logger())
 
     def image_callback(self, msg: Image) -> None:
         self.streamer.set_frame(msg)
+
+    def handle_offer_request(
+        self, request: WebRTCOffer_Request, response: WebRTCOffer_Response
+    ) -> WebRTCOffer_Response:
+        """Handle WebRTC offer request and return answer"""
+        self.get_logger().info(
+            f"Received WebRTC offer: type={request.type}, sdp length={len(request.sdp)}"
+        )
+
+        # Create RTCSessionDescription from the request
+        offer = RTCSessionDescription(sdp=request.sdp, type=request.type)
+
+        # Call the async offer method from the main thread
+        answer = self.streamer.offer_sync(offer)
+
+        # Set the response
+        response.type = answer.type
+        response.sdp = answer.sdp
+
+        return response
 
 
 def main():

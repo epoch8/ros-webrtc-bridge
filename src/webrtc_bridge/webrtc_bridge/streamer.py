@@ -39,11 +39,16 @@ class ProxiedVideoStreamTrack(VideoStreamTrack):
 
 
 class WebRTCStreamer:
-    def __init__(self, logger) -> None:
+    def __init__(self, logger, loop: asyncio.AbstractEventLoop | None = None) -> None:
         self.pcs: set[RTCPeerConnection] = set()
         self.relay = MediaRelay()
         self.video_stream = ProxiedVideoStreamTrack()
         self.logger = logger
+
+        if loop is None:
+            loop = asyncio.new_event_loop()
+
+        self.loop = loop
 
     def set_frame(self, image_msg: Image) -> None:
         if image_msg.encoding == "yuv422_yuy2":
@@ -105,6 +110,18 @@ class WebRTCStreamer:
         return RTCSessionDescription(
             sdp=pc.localDescription.sdp, type=pc.localDescription.type
         )
+
+    def offer_sync(self, offer: RTCSessionDescription) -> RTCSessionDescription:
+        if self.loop is None:
+            raise RuntimeError(
+                "Event loop not set. Make sure the web server is running."
+            )
+
+        if not self.loop.is_running():
+            raise RuntimeError("Event loop is not running.")
+
+        future = asyncio.run_coroutine_threadsafe(self.offer(offer), self.loop)
+        return future.result()
 
     async def shutdown(self) -> None:
         self.logger.info("Shutting down WebRTCStreamer")

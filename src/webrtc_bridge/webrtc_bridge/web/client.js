@@ -1,3 +1,13 @@
+var ros = new ROSLIB.Ros();
+
+ros.connect("ws://192.168.0.27:9090");
+
+var offer_svc = new ROSLIB.Service({
+    ros: ros, 
+    name: "/webrtc_bridge_local_node/offer", 
+    serviceType: "webrtc_bridge_srv/srv/WebRTCOffer",
+});
+
 var pc = null;
 
 function negotiate() {
@@ -22,20 +32,21 @@ function negotiate() {
         });
     }).then(() => {
         var offer = pc.localDescription;
-        return fetch('/offer', {
-            body: JSON.stringify({
+        return new Promise((resolve, reject) => {
+            offer_svc.callService(new ROSLIB.ServiceRequest({
                 sdp: offer.sdp,
                 type: offer.type,
-            }),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            method: 'POST'
+            }), (response) => {
+                if (response) {
+                    resolve(response);
+                } else {
+                    reject(new Error("Failed to get response"));
+                }
+            });
         });
     }).then((response) => {
-        return response.json();
-    }).then((answer) => {
-        return pc.setRemoteDescription(answer);
+        // response is a ROSLIB.ServiceResponse object
+        return pc.setRemoteDescription(response);
     }).catch((e) => {
         alert(e);
     });

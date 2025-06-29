@@ -1,0 +1,7 @@
+# RTCSessionDescription for WebRTC offer
+string type
+string sdp
+---
+# RTCSessionDescription for WebRTC answer
+string type
+string sdp
