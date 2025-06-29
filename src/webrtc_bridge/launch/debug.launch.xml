@@ -12,7 +12,7 @@
     <remap from="/camera_info" to="/usb_cam/camera_info"/>
   </node>
 
-  <!-- <include file="$(find-pkg-share rosbridge_server)/launch/rosbridge_websocket_launch.xml"/> -->
+  <include file="$(find-pkg-share rosbridge_server)/launch/rosbridge_websocket_launch.xml"/>
 
   <node pkg="webrtc_bridge" exec="webrtc_bridge_local_node">
     <param name="image_topic" value="/usb_cam/image_raw"/>

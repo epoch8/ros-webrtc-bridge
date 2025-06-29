@@ -2,6 +2,9 @@ import asyncio
 import importlib.resources
 import json
 
+import av
+import numpy as np
+import rclpy.logging
 from aiohttp import web
 from aiortc import (
     MediaStreamTrack,
@@ -12,9 +15,6 @@ from aiortc import (
 )
 from aiortc.contrib.media import MediaRelay
 from av import VideoFrame
-import av
-import numpy as np
-import rclpy.logging
 from sensor_msgs.msg import Image
 
 
@@ -42,10 +42,11 @@ class ProxiedVideoStreamTrack(VideoStreamTrack):
 
 
 class WebRTCStreamer:
-    def __init__(self) -> None:
+    def __init__(self, logger) -> None:
         self.pcs: set[RTCPeerConnection] = set()
         self.relay = MediaRelay()
         self.video_stream = ProxiedVideoStreamTrack()
+        self.logger = logger
 
     def set_frame(self, image_msg: Image) -> None:
         if image_msg.encoding == "yuv422_yuy2":
@@ -56,7 +57,7 @@ class WebRTCStreamer:
 
             self.video_stream.set_frame(frame)
         else:
-            rclpy.logging.get_logger("WebRTCStreamer").log(
+            self.logger.log(
                 f"Unsupported image encoding: {image_msg.encoding}. Expected 'yuv422_yuy2'.",
                 rclpy.logging.LoggingSeverity.WARN,
             )
@@ -78,17 +79,16 @@ class WebRTCStreamer:
         """Force H.264 codec on the sender."""
         self.force_codec(pc, sender, "video/H264")
 
-    async def offer(self, request: web.Request) -> web.Response:
-        params = await request.json()
-        offer = RTCSessionDescription(sdp=params["sdp"], type=params["type"])
-
+    async def offer(self, offer: RTCSessionDescription) -> RTCSessionDescription:
         pc = RTCPeerConnection()
         self.pcs.add(pc)
 
+        self.logger.info(f"Starting new peer connection: {id(pc)}")
+        self.logger.debug(offer.sdp)
+
         @pc.on("connectionstatechange")
         async def on_connectionstatechange() -> None:
-            print("Connection state is %s" % pc.connectionState)
-            print("")
+            self.logger.info(f"Connection {id(pc)} state is {pc.connectionState}")
             if pc.connectionState == "failed":
                 await pc.close()
                 self.pcs.discard(pc)
@@ -105,11 +105,8 @@ class WebRTCStreamer:
         answer = await pc.createAnswer()
         await pc.setLocalDescription(answer)
 
-        return web.Response(
-            content_type="application/json",
-            text=json.dumps(
-                {"sdp": pc.localDescription.sdp, "type": pc.localDescription.type}
-            ),
+        return RTCSessionDescription(
+            sdp=pc.localDescription.sdp, type=pc.localDescription.type
         )
 
     async def on_shutdown(self, app: web.Application) -> None:
@@ -117,9 +114,6 @@ class WebRTCStreamer:
         coros = [pc.close() for pc in self.pcs]
         await asyncio.gather(*coros)
         self.pcs.clear()
-
-
-streamer = WebRTCStreamer()
 
 
 async def index(request: web.Request) -> web.Response:
@@ -136,21 +130,26 @@ async def javascript(request: web.Request) -> web.Response:
     return web.Response(content_type="application/javascript", text=content)
 
 
-def main():
-    # logging.basicConfig(level=logging.DEBUG)
+def run_web(streamer: WebRTCStreamer) -> None:
+    async def offer(request: web.Request) -> web.Response:
+        params = await request.json()
+        offer = RTCSessionDescription(sdp=params["sdp"], type=params["type"])
+
+        res = await streamer.offer(offer)
+
+        return web.Response(
+            content_type="application/json",
+            text=json.dumps({"sdp": res.sdp, "type": res.type}),
+        )
 
     app = web.Application()
     app.on_shutdown.append(streamer.on_shutdown)
     app.router.add_get("/", index)
     app.router.add_get("/client.js", javascript)
-    app.router.add_post("/offer", streamer.offer)
+    app.router.add_post("/offer", offer)
     web.run_app(
         app,
         host="0.0.0.0",
         port=8080,
         handle_signals=False,
     )
-
-
-if __name__ == "__main__":
-    main()

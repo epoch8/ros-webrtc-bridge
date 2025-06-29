@@ -4,8 +4,7 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 
-from webrtc_bridge.webcam import main as webcam_main
-from webrtc_bridge.webcam import streamer
+from webrtc_bridge.webcam import WebRTCStreamer, run_web
 
 
 class WebRTCBridgeLocalNode(Node):
@@ -30,15 +29,17 @@ class WebRTCBridgeLocalNode(Node):
             Image, self.image_topic, self.image_callback, 1
         )
 
+        self.streamer = WebRTCStreamer(self.get_logger())
+
     def image_callback(self, msg: Image) -> None:
-        streamer.set_frame(msg)
+        self.streamer.set_frame(msg)
 
 
 def main():
     rclpy.init()
     node = WebRTCBridgeLocalNode()
 
-    webcam_thread = threading.Thread(target=webcam_main, daemon=True)
+    webcam_thread = threading.Thread(target=run_web, args=(node.streamer,), daemon=True)
     webcam_thread.start()
 
     try:
