@@ -4,7 +4,8 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 
-from webrtc_bridge.webcam import WebRTCStreamer, run_web
+from webrtc_bridge.streamer import WebRTCStreamer
+from webrtc_bridge.web.server import run_web
 
 
 class WebRTCBridgeLocalNode(Node):

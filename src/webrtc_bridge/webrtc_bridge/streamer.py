@@ -1,11 +1,8 @@
 import asyncio
-import importlib.resources
-import json
 
 import av
 import numpy as np
 import rclpy.logging
-from aiohttp import web
 from aiortc import (
     MediaStreamTrack,
     RTCPeerConnection,
@@ -109,47 +106,10 @@ class WebRTCStreamer:
             sdp=pc.localDescription.sdp, type=pc.localDescription.type
         )
 
-    async def on_shutdown(self, app: web.Application) -> None:
-        # Close peer connections.
+    async def shutdown(self) -> None:
+        self.logger.info("Shutting down WebRTCStreamer")
+        # Close all peer connections.
         coros = [pc.close() for pc in self.pcs]
         await asyncio.gather(*coros)
         self.pcs.clear()
-
-
-async def index(request: web.Request) -> web.Response:
-    with importlib.resources.path("webrtc_bridge", "index.html") as path:
-        with open(path, "r") as f:
-            content = f.read()
-    return web.Response(content_type="text/html", text=content)
-
-
-async def javascript(request: web.Request) -> web.Response:
-    with importlib.resources.path("webrtc_bridge", "client.js") as path:
-        with open(path, "r") as f:
-            content = f.read()
-    return web.Response(content_type="application/javascript", text=content)
-
-
-def run_web(streamer: WebRTCStreamer) -> None:
-    async def offer(request: web.Request) -> web.Response:
-        params = await request.json()
-        offer = RTCSessionDescription(sdp=params["sdp"], type=params["type"])
-
-        res = await streamer.offer(offer)
-
-        return web.Response(
-            content_type="application/json",
-            text=json.dumps({"sdp": res.sdp, "type": res.type}),
-        )
-
-    app = web.Application()
-    app.on_shutdown.append(streamer.on_shutdown)
-    app.router.add_get("/", index)
-    app.router.add_get("/client.js", javascript)
-    app.router.add_post("/offer", offer)
-    web.run_app(
-        app,
-        host="0.0.0.0",
-        port=8080,
-        handle_signals=False,
-    )
+        self.relay.close()
