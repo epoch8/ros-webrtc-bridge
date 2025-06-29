@@ -14,3 +14,10 @@ webrtc-bridge implements two nodes:
   ROS system are located in different networks. In this case
   `webrtc_bridge_remote_node` uses external service for signaling and carries
   all the data signals using WebRTC technology
+
+# Current state
+
+| Use case | Status |
+| --- | --- |
+| Simple streaming from USB camera on x86 with software encoding | :white_check_mark: |
+ 
