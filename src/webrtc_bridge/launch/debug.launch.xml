@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <launch>
+  <arg name="video_device" default="/dev/video0" description="Video device path (e.g., /dev/video0, /dev/video1)"/>
+
   <node pkg="usb_cam" exec="usb_cam_node_exe" name="usb_cam">
-    <param name="video_device" value="/dev/video0"/>
+    <param name="video_device" value="$(var video_device)"/>
     <param name="image_width" value="640"/>
     <param name="image_height" value="480"/>
     <param name="pixel_format" value="yuyv"/>

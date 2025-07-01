@@ -33,5 +33,13 @@ ros-kilted-rosidl-cmake = ">=4.9.4,<5"
 ros-kilted-rosidl-generator-py = ">=0.24.1,<0.25"
 ros-kilted-rosidl-default-generators = ">=1.7.1,<2"
 
+#[env]
+#LIBCAMERA_IPA_PROXY_PATH=".pixi/envs/default/libexec/libcamera"
+
+[target.linux-aarch64.dependencies]
+ros-kilted-camera-ros = ">=0.4.0,<0.5"
+libcamera = { version = ">=0.5.0", build = "*rpi_fork"}
+libcamera-rpi = "*"
+
 [pypi-dependencies]
 webrtc-bridge = { path = "./src/webrtc_bridge" }
